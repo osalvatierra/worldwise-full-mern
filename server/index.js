@@ -32,7 +32,7 @@ db.once("open", function () {
 });
 
 const corsOptions = {
-  origin: "https://full-mern-stack-code.onrender.com",
+  origin: "https://worldwise-full-mern.onrender.com/",
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Origin, Content-Type, X-Auth-Token",
