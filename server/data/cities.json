@@ -1,0 +1,64 @@
+{
+  "cities": [
+    {
+      "cityName": "Madrid",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2027-07-15T08:22:53.976Z",
+      "notes": "",
+      "position": {
+        "lat": 40.46635901755316,
+        "lng": -3.7133789062500004
+      },
+      "id": 17806751
+    },
+    {
+      "cityName": "Gilsum",
+      "country": "United States of America (the)",
+      "emoji": "🇺🇸",
+      "date": "2023-10-08T18:08:11.244Z",
+      "notes": "asdfasdf",
+      "position": {
+        "lat": "43.02071359427862",
+        "lng": "-72.29003906250001"
+      },
+      "id": 98443198
+    },
+    {
+      "cityName": "Acacias",
+      "country": "Colombia",
+      "emoji": "🇨🇴",
+      "date": "2023-10-08T18:13:06.647Z",
+      "notes": "DDD",
+      "position": {
+        "lat": "3.9519408561575946",
+        "lng": "-73.56445312500001"
+      },
+      "id": 98443199
+    },
+    {
+      "cityName": "Requena",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2023-10-12T18:05:43.528Z",
+      "notes": "",
+      "position": {
+        "lat": "39.605688178320804",
+        "lng": "-1.0986328125000002"
+      },
+      "id": 98443200
+    },
+    {
+      "cityName": "New York City",
+      "country": "United States of America (the)",
+      "emoji": "🇺🇸",
+      "date": "2023-10-12T18:19:17.142Z",
+      "notes": "Brooklyn",
+      "position": {
+        "lat": "40.71707851579789",
+        "lng": "-73.99291992187501"
+      },
+      "id": 98443201
+    }
+  ]
+}
