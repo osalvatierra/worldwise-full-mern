@@ -34,12 +34,21 @@ function Form() {
   const [date, setDate] = useState(new Date());
   const [notes, setNotes] = useState("");
   const [emoji, setEmoji] = useState("");
+  const [id, setId] = useState("");
   const [geocodingError, setGeocodingError] = useState("");
 
   useEffect(
     function () {
       if (!lat & !lng) return;
+
+      function gfg() {
+        var minm = 10000000;
+        var maxm = 99999999;
+        return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+      }
+
       async function fetchCityData() {
+        const randId = gfg();
         try {
           setIsLoadingGeocoding(true);
           setGeocodingError("");
@@ -57,6 +66,7 @@ function Form() {
           setCityName(data.city || data.locality || "");
           setCountry(data.countryName);
           setEmoji(convertToEmoji(data.countryCode));
+          setId(randId);
         } catch (err) {
           setGeocodingError(err.message);
         } finally {
@@ -79,8 +89,10 @@ function Form() {
       date,
       notes,
       position: { lat, lng },
+      id,
     };
-
+    console.log("FORM COMPONENT");
+    console.log(newCity);
     await createCity(newCity);
     navigate("/app/cities");
   }

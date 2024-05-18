@@ -1,0 +1,7 @@
+Next Steps for Completing App:
+
+Create a Delete Route in Index File
+
+Fix the /app/cities vs /cities entry in CityList, which defaults to the latter and therefor cannot smoothly navigate
+
+Big Fix: Migrate the login feature from 'full-mern-stack-code' into the most recent 'worldwise' project. Login feature is fully functional with Mongo DB. Need to figure a way to make sure aesthetics stay same while login functionality points to these working files.
