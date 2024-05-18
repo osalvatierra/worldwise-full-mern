@@ -1,16 +1,38 @@
 import { Link } from "react-router-dom";
 import styles from "./CityItem.module.css";
 import { useCities } from "../contexts/CitiesContext";
-const formatDate = (date) =>
-  new Intl.DateTimeFormat("en", {
+// import { useEffect, useState } from "react";
+const formatDate = (date) => {
+  // Check if the date argument is valid
+  if (!date) {
+    return "Invalid Date";
+  }
+
+  // Create a new Date object from the date argument
+  const dateObject = new Date(date);
+
+  // Check if the dateObject is a valid Date object
+  if (isNaN(dateObject.getTime())) {
+    return "Invalid Date";
+  }
+
+  return new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "long",
     year: "numeric",
   }).format(new Date(date));
+};
 
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
   const { cityName, emoji, date, id, position } = city;
+  const { lat, lng } = position;
+
+  // const [position, setPosition] = useState({ lat: null, lng: null });
+
+  // useEffect(() => {
+  //   setPosition(currentCity.position);
+  // }, [currentCity]);
 
   function handleClick(e) {
     e.preventDefault();
@@ -24,7 +46,7 @@ function CityItem({ city }) {
         className={`${styles.cityItem} ${
           id === currentCity.id ? styles["cityItem--active"] : ""
         }`}
-        to={`${id}?lat=${position.lat}&lng=${position.lng}`}
+        to={`${id}?lat=${lat}&lng=${lng}`}
       >
         <span className={styles.emoji}>{emoji}</span>
         <h3 className={styles.name}>{cityName}</h3>

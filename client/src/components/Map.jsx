@@ -1,4 +1,6 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
   TileLayer,
@@ -8,33 +10,33 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import styles from "./Map.module.css";
-import { useEffect, useState } from "react";
 import { useCities } from "../contexts/CitiesContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import Button from "./Button";
-import { useUrlPosition } from "../hooks/useUrlPosition";
+// import { useUrlPosition } from "../hooks/useUrlPosition";
 
-function Map() {
+function Map({ cityId, lat, lng }) {
   const { cities } = useCities();
-
+  // console.log(cities.map((city) => console.log(cities)));
   const [mapPosition, setMapPosition] = useState([40, 0]);
+  console.log(useCities());
+  useEffect(
+    function () {
+      if (lat && lng) setMapPosition([lat, lng]);
+    },
+    [lat, lng]
+  );
+
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
     getPosition,
   } = useGeolocation();
 
-  const [mapLat, mapLng] = useUrlPosition();
+  // const [mapLat, mapLng] = useUrlPosition();
 
   useEffect(
-    function() {
-      if (mapLat & mapLng) setMapPosition([mapLat, mapLng]);
-    },
-    [mapLat, mapLng]
-  );
-
-  useEffect(
-    function() {
+    function () {
       if (geolocationPosition)
         setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
     },
