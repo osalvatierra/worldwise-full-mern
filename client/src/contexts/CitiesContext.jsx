@@ -80,6 +80,7 @@ function CitiesProvider({ children, onLogin }) {
     try {
       // Fetch user's email from the server
       const emailRes = await fetch(`${BASE_URL}/api/user-email`, {
+        method: "GET",
         credentials: "include", // Include cookies in the request
       });
       if (!emailRes.ok) {
