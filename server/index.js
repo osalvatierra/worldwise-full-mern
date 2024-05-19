@@ -38,8 +38,8 @@ const corsOptions = {
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Origin, Content-Type, X-Auth-Token",
   optionsSuccessStatus: 204,
-  sameSite: "None",
-  secure: true, // Set Secure attribute to true
+  sameSite: "Lax",
+  secure: true,
 };
 
 app.use(cors(corsOptions));
@@ -181,55 +181,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// app.get("/api/quote", async (req, res) => {
-//   const authToken = req.cookies.xaccesstoken;
-
-//   if (!authToken) {
-//     res.redirect("/login");
-
-//     console.error({ error: "Unauthorized" });
-//   }
-//   try {
-//     const decoded = jwt.verify(authToken, "secrete123");
-//     const email = decoded.email;
-//     const user = await User.findOne({ email: email });
-//     console.log(user);
-
-//     if (inOtherRoute === true) {
-//       res.cookie(authToken, { expires: Date.now(0) });
-//       res.clearCookie(authToken, { path: "/" });
-//       res.redirect("/login");
-//       return res.status(401).json({ error: "Unauthorized" });
-//     }
-//     return res.json({ status: "ok", quote: user.quote });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({ status: "error", error: "invalid token" });
-//   }
-// });
-
-// app.post("/api/quote", async (req, res) => {
-//   //const token = req.headers["x-access-token"];
-//   const authToken = req.cookies.xaccesstoken;
-//   if (!authToken) {
-//     return res.status(401).json({ error: "Unauthorized" });
-//   }
-//   try {
-//     const decoded = jwt.verify(authToken, "secrete123");
-//     const email = decoded.email;
-//     await User.updateOne({ email: email }, { $set: { quote: req.body.quote } });
-//     if (inOtherRoute === true) {
-//       res.cookie(authToken, { expires: Date.now(0) });
-//       res.clearCookie(authToken, { path: "/" });
-//       return res.status(401).json({ error: "Unauthorized" });
-//     }
-//     return res.json({ status: "ok" });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({ status: "error", error: "invalid token" });
-//   }
-// });
-
 app.post("/api/logout", (req, res) => {
   // Access the user information attached to the request object
   console.log("Logout route called");
@@ -332,20 +283,6 @@ app.get("/api/user-email", async (req, res) => {
     }
   }
 });
-
-// Server-side code to get user email from front end
-// app.get("/api/user-email", (req, res) => {
-//   const authToken = req.cookies.xaccesstoken;
-
-//   try {
-//     const decoded = jwt.verify(authToken, "secrete123");
-//     const userEmail = decoded.email;
-//     return res.json({ email: userEmail });
-//   } catch (error) {
-//     console.error("Error decoding JWT token:", error);
-//     return res.status(500).json({ error: "Failed to decode JWT token" });
-//   }
-// });
 
 // Define a route to handle POST requests to add a city to a user's cities
 app.post("/cities", async (req, res) => {
