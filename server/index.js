@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 let inOtherRoute = false;
 
 // Define a route to serve the dynamic JSON file
-app.get("/cities", (req, res) => {
+app.get("/app/cities", (req, res) => {
   const authToken = req.cookies.xaccesstoken;
   console.log("Received cookies:", authToken); // Log the received cookies
   const userEmail = req.query.userEmail;
@@ -430,7 +430,7 @@ app.post("/app/form/:id", async (req, res) => {
 });
 
 // Define a route to handle DELETE requests to delete a city by ID from a user's cities
-app.delete("/cities/:id", async (req, res) => {
+app.delete("/app/cities/:id", async (req, res) => {
   const authToken = req.cookies.xaccesstoken;
 
   try {

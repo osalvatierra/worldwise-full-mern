@@ -172,7 +172,7 @@ function CitiesProvider({ children, onLogin }) {
     dispatch({ type: "loading" });
     try {
       // Use the user's email to create the city data
-      const res = await fetch(`${BASE_URL}/cities`, {
+      const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
         body: JSON.stringify({ ...newCity }), // Include the user's email in the city data
         headers: {
@@ -197,7 +197,7 @@ function CitiesProvider({ children, onLogin }) {
   async function deleteCity(id) {
     dispatch({ type: "loading" });
     try {
-      await fetch(`${BASE_URL}/cities/${id}`, {
+      await fetch(`${BASE_URL}/app/cities/${id}`, {
         method: "DELETE",
         credentials: "include", // Include cookies in the request
       });
