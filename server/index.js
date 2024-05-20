@@ -285,7 +285,7 @@ app.get("/api/user-email", async (req, res) => {
 });
 
 // Define a route to handle POST requests to add a city to a user's cities
-app.post("/cities", async (req, res) => {
+app.post("/app/cities", async (req, res) => {
   const userEmail = req.query.email;
   console.log("Received email:", userEmail); // Log the received email
 
