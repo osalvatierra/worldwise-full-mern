@@ -89,7 +89,7 @@ function CitiesProvider({ children, onLogin }) {
       const userEmail = await emailRes.json();
 
       const res = await fetch(
-        `${BASE_URL}/cities?userEmail=${userEmail.email}`,
+        `${BASE_URL}/app/cities?userEmail=${userEmail.email}`,
         {
           method: "GET",
           credentials: "include", // Include cookies in the request
