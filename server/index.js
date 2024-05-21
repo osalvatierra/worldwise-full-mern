@@ -42,7 +42,7 @@ const corsOptions = {
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Origin, Content-Type, X-Auth-Token",
   optionsSuccessStatus: 204,
-  sameSite: "Lax",
+  sameSite: "None",
   secure: true,
 };
 
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// let inOtherRoute = false;
+let inOtherRoute = false;
 
 // Function to commit and push changes to git
 const commitAndPush = async (filePath, message) => {
