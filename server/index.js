@@ -125,7 +125,7 @@ app.post("/api/register", async (req, res) => {
     fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
 
     // Commit and push the new file to the git repository
-    await commitAndPush(
+    commitAndPush(
       `./data/${userId}_cities.json`,
       `Add new user data for ${userId}`
     );
