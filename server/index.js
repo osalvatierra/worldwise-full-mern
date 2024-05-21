@@ -11,6 +11,7 @@ const bycrypt = require("bcryptjs");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
+const simpleGit = require("simple-git");
 
 // Use morgan for logging
 app.use(morgan("combined"));
@@ -19,6 +20,9 @@ app.use(cookieParser());
 
 // Load environment variables from config.env file
 dotenv.config({ path: "./config.env" });
+
+// Initialize simple-git
+const git = simpleGit();
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STRING, {
@@ -49,7 +53,19 @@ app.use((req, res, next) => {
   next();
 });
 
-let inOtherRoute = false;
+// let inOtherRoute = false;
+
+// Function to commit and push changes to git
+const commitAndPush = async (filePath, message) => {
+  try {
+    await git.add(filePath);
+    await git.commit(message);
+    await git.push();
+    console.log("Changes committed and pushed to git repository.");
+  } catch (error) {
+    console.error("Error committing and pushing to git repository:", error);
+  }
+};
 
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", (req, res) => {
@@ -107,6 +123,12 @@ app.post("/api/register", async (req, res) => {
     const userId = req.body.email; // You can use the email as the unique identifier
     const userData = { cities: [] };
     fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
+
+    // Commit and push the new file to the git repository
+    await commitAndPush(
+      `./data/${userId}_cities.json`,
+      `Add new user data for ${userId}`
+    );
 
     res.json({ status: "ok" });
   } catch (error) {
@@ -340,6 +362,13 @@ app.post("/app/cities", async (req, res) => {
                     .json({ error: "Error saving cities to JSON file" });
                 } else {
                   console.log("Cities saved to JSON file successfully");
+
+                  // Commit and push the updated file to the git repository
+                  commitAndPush(
+                    `./data/${userEmail}_cities.json`,
+                    `Update cities data for ${userEmail}`
+                  );
+
                   res.status(201).json(req.body);
                 }
               }
