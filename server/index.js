@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const fs = require("fs").promises;
-const fsR = require("fs");
+const fs = require("fs");
+
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bycrypt = require("bcryptjs");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -53,32 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Temporary route to verify CORS headers
-app.options("*", cors(corsOptions)); // Enable preflight response for all routes
-
-// Log incoming requests to debug CORS issues
-app.use((req, res, next) => {
-  console.log(`Incoming request from origin: ${req.headers.origin}`);
-  next();
-});
-
-app.get("/test-cors", (req, res) => {
-  res.json({ message: "CORS headers are set correctly" });
-});
-
-let inOtherRoute = false;
-
-// Function to commit and push changes to git
-const commitAndPush = async (filePath, message) => {
-  try {
-    await git.add(filePath);
-    await git.commit(message);
-    await git.push();
-    console.log("Changes committed and pushed to git repository.");
-  } catch (error) {
-    console.error("Error committing and pushing to git repository:", error);
-  }
-};
+// let inOtherRoute = false;
 
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", (req, res) => {
@@ -88,10 +63,10 @@ app.get("/app/cities", (req, res) => {
   console.log("email:", userEmail);
   try {
     // Read the user's JSON file based on their email address
-    fsR.readFileSync(
+    fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
-      async (error, jsonData) => {
+      (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -124,7 +99,7 @@ app.post("/api/register", async (req, res) => {
   console.log(req.body);
 
   try {
-    const newPassword = await bcrypt.hash(req.body.password, 10);
+    const newPassword = await bycrypt.hash(req.body.password, 10);
     await User.create({
       name: req.body.name,
       email: req.body.email,
@@ -135,16 +110,7 @@ app.post("/api/register", async (req, res) => {
     // Create a new JSON file for the user's data
     const userId = req.body.email; // You can use the email as the unique identifier
     const userData = { cities: [] };
-    await fs.writeFile(
-      `./data/${userId}_cities.json`,
-      JSON.stringify(userData)
-    );
-
-    // Commit and push the new file to the git repository
-    await commitAndPush(
-      `./data/${userId}_cities.json`,
-      `Add new user data for ${userId}`
-    );
+    fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
 
     res.json({ status: "ok" });
   } catch (error) {
@@ -173,7 +139,7 @@ app.post("/api/login", async (req, res) => {
       email: req.body.email,
     });
 
-    const isPasswordValid = await bcrypt.compare(
+    const isPasswordValid = await bycrypt.compare(
       req.body.password,
       user.password
     );
@@ -340,10 +306,10 @@ app.post("/app/cities", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fsR.readFileSync(
+    fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
-      async (error, jsonData) => {
+      (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -364,10 +330,10 @@ app.post("/app/cities", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            await fs.writeFile(
+            fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
-              async (writeError) => {
+              (writeError) => {
                 if (writeError) {
                   console.error(
                     "Error saving cities to JSON file:",
@@ -378,13 +344,6 @@ app.post("/app/cities", async (req, res) => {
                     .json({ error: "Error saving cities to JSON file" });
                 } else {
                   console.log("Cities saved to JSON file successfully");
-
-                  // Commit and push the updated file to the git repository
-                  await commitAndPush(
-                    `./data/${userEmail}_cities.json`,
-                    `Update cities data for ${userEmail}`
-                  );
-
                   res.status(201).json(req.body);
                 }
               }
@@ -412,7 +371,7 @@ app.post("/app/form/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fsF.readFileSync(
+    fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
@@ -441,7 +400,7 @@ app.post("/app/form/:id", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            await fs.writeFile(
+            fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
@@ -483,10 +442,10 @@ app.delete("/app/cities/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fsR.readFileSync(
+    fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
-      async (error, jsonData) => {
+      (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -511,7 +470,7 @@ app.delete("/app/cities/:id", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            await fs.writeFile(
+            fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
@@ -551,7 +510,7 @@ app.get("/app/cities/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fsF.readFileSync(
+    fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
