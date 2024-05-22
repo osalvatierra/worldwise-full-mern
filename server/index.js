@@ -1,13 +1,12 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const fs = require("fs");
-
+const fs = require("fs").promises;
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
-const bycrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -78,7 +77,7 @@ app.get("/app/cities", (req, res) => {
     fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
-      (error, jsonData) => {
+      async (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -122,7 +121,10 @@ app.post("/api/register", async (req, res) => {
     // Create a new JSON file for the user's data
     const userId = req.body.email; // You can use the email as the unique identifier
     const userData = { cities: [] };
-    fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
+    await fs.writeFile(
+      `./data/${userId}_cities.json`,
+      JSON.stringify(userData)
+    );
 
     // Commit and push the new file to the git repository
     await commitAndPush(
@@ -348,7 +350,7 @@ app.post("/app/cities", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            fs.writeFile(
+            await fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
               async (writeError) => {
@@ -425,7 +427,7 @@ app.post("/app/form/:id", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            fs.writeFile(
+            await fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
@@ -470,7 +472,7 @@ app.delete("/app/cities/:id", async (req, res) => {
     fs.readFile(
       `./data/${userEmail}_cities.json`,
       "utf8",
-      (error, jsonData) => {
+      async (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -495,7 +497,7 @@ app.delete("/app/cities/:id", async (req, res) => {
             const updatedJsonData = JSON.stringify(parsedData);
 
             // Write the updated JSON data back to the file
-            fs.writeFile(
+            await fs.writeFile(
               `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
