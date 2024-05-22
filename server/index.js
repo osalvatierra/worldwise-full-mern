@@ -54,6 +54,13 @@ app.use((req, res, next) => {
 
 // Temporary route to verify CORS headers
 app.options("*", cors(corsOptions)); // Enable preflight response for all routes
+
+// Log incoming requests to debug CORS issues
+app.use((req, res, next) => {
+  console.log(`Incoming request from origin: ${req.headers.origin}`);
+  next();
+});
+
 app.get("/test-cors", (req, res) => {
   res.json({ message: "CORS headers are set correctly" });
 });
