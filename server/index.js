@@ -122,14 +122,11 @@ app.post("/api/register", async (req, res) => {
     // Create a new JSON file for the user's data
     const userId = req.body.email; // You can use the email as the unique identifier
     const userData = { cities: [] };
-    fs.writeFileSync(
-      `./server/data/${userId}_cities.json`,
-      JSON.stringify(userData)
-    );
+    fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
 
     // Commit and push the new file to the git repository
     await commitAndPush(
-      `./server/data/${userId}_cities.json`,
+      `./data/${userId}_cities.json`,
       `Add new user data for ${userId}`
     );
 
@@ -328,9 +325,9 @@ app.post("/app/cities", async (req, res) => {
 
     // Read the user's JSON file based on their email address
     fs.readFile(
-      `./server/data/${userEmail}_cities.json`,
+      `./data/${userEmail}_cities.json`,
       "utf8",
-      (error, jsonData) => {
+      async (error, jsonData) => {
         if (error) {
           console.error("Error reading JSON file:", error);
           res.status(500).json({ error: "Failed to import JSON file" });
@@ -352,9 +349,9 @@ app.post("/app/cities", async (req, res) => {
 
             // Write the updated JSON data back to the file
             fs.writeFile(
-              `./server/data/${userEmail}_cities.json`,
+              `./data/${userEmail}_cities.json`,
               updatedJsonData,
-              (writeError) => {
+              async (writeError) => {
                 if (writeError) {
                   console.error(
                     "Error saving cities to JSON file:",
@@ -367,8 +364,8 @@ app.post("/app/cities", async (req, res) => {
                   console.log("Cities saved to JSON file successfully");
 
                   // Commit and push the updated file to the git repository
-                  commitAndPush(
-                    `./server/data/${userEmail}_cities.json`,
+                  await commitAndPush(
+                    `./data/${userEmail}_cities.json`,
                     `Update cities data for ${userEmail}`
                   );
 
@@ -429,7 +426,7 @@ app.post("/app/form/:id", async (req, res) => {
 
             // Write the updated JSON data back to the file
             fs.writeFile(
-              `./server/data/${userEmail}_cities.json`,
+              `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
                 if (writeError) {
@@ -442,12 +439,6 @@ app.post("/app/form/:id", async (req, res) => {
                     .json({ error: "Error saving cities to JSON file" });
                 } else {
                   console.log("City coordinates updated successfully");
-
-                  commitAndPush(
-                    `./server/data/${userEmail}_cities.json`,
-                    `Updated user data for ${userEmail}`
-                  );
-
                   res.json({
                     message: "City coordinates updated successfully",
                   });
@@ -477,7 +468,7 @@ app.delete("/app/cities/:id", async (req, res) => {
 
     // Read the user's JSON file based on their email address
     fs.readFile(
-      `./server/data/${userEmail}_cities.json`,
+      `./data/${userEmail}_cities.json`,
       "utf8",
       (error, jsonData) => {
         if (error) {
@@ -505,7 +496,7 @@ app.delete("/app/cities/:id", async (req, res) => {
 
             // Write the updated JSON data back to the file
             fs.writeFile(
-              `./server/data/${userEmail}_cities.json`,
+              `./data/${userEmail}_cities.json`,
               updatedJsonData,
               (writeError) => {
                 if (writeError) {
@@ -518,11 +509,6 @@ app.delete("/app/cities/:id", async (req, res) => {
                     .json({ error: "Error saving cities to JSON file" });
                 } else {
                   console.log("City deleted successfully");
-
-                  commitAndPush(
-                    `./server/data/${userEmail}_cities.json`,
-                    `Deleted user data for ${userEmail}`
-                  );
                   res.json({ message: "City deleted successfully" });
                 }
               }
