@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const fs = require("fs").promises;
+const fsR = require("fs");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const cookieParser = require("cookie-parser");
@@ -65,7 +66,7 @@ app.get("/test-cors", (req, res) => {
   res.json({ message: "CORS headers are set correctly" });
 });
 
-// let inOtherRoute = false;
+let inOtherRoute = false;
 
 // Function to commit and push changes to git
 const commitAndPush = async (filePath, message) => {
@@ -87,7 +88,7 @@ app.get("/app/cities", (req, res) => {
   console.log("email:", userEmail);
   try {
     // Read the user's JSON file based on their email address
-    fs.readFile(
+    fsR.readFileSync(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
@@ -339,7 +340,7 @@ app.post("/app/cities", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fs.readFile(
+    fsR.readFileSync(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
@@ -411,7 +412,7 @@ app.post("/app/form/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fs.readFile(
+    fsF.readFileSync(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
@@ -482,7 +483,7 @@ app.delete("/app/cities/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fs.readFile(
+    fsR.readFileSync(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
@@ -550,7 +551,7 @@ app.get("/app/cities/:id", async (req, res) => {
     const userEmail = decoded.email;
 
     // Read the user's JSON file based on their email address
-    fs.readFile(
+    fsF.readFileSync(
       `./data/${userEmail}_cities.json`,
       "utf8",
       async (error, jsonData) => {
