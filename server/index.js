@@ -52,6 +52,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Temporary route to verify CORS headers
+app.options("*", cors(corsOptions)); // Enable preflight response for all routes
+app.get("/test-cors", (req, res) => {
+  res.json({ message: "CORS headers are set correctly" });
+});
+
 // let inOtherRoute = false;
 
 // Function to commit and push changes to git
