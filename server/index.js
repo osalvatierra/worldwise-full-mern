@@ -110,7 +110,7 @@ app.post("/api/register", async (req, res) => {
   console.log(req.body);
 
   try {
-    const newPassword = await bycrypt.hash(req.body.password, 10);
+    const newPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({
       name: req.body.name,
       email: req.body.email,
@@ -159,7 +159,7 @@ app.post("/api/login", async (req, res) => {
       email: req.body.email,
     });
 
-    const isPasswordValid = await bycrypt.compare(
+    const isPasswordValid = await bcrypt.compare(
       req.body.password,
       user.password
     );
