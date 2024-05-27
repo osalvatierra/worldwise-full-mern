@@ -74,25 +74,45 @@ app.get("/app/cities", async (req, res) => {
 
 app.post("/app/cities", async (req, res) => {
   const authToken = req.cookies.xaccesstoken;
-  console.log("Received cookies:", authToken); // Log the received cookies
-
-  if (!authToken) {
-    return res.status(401).json({ error: "JWT token must be provided" });
-  }
+  console.log("Received cookies:", req.cookies);
 
   try {
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
 
-    // Find the user's cities document and update it
-    const userCities = await City.findOne({ userEmail });
-    if (userCities) {
-      userCities.cities.push(req.body);
-      await userCities.save();
-      res.status(201).json(req.body);
-    } else {
-      res.status(404).json({ error: "Cities data not found" });
+    // Ensure the new city data includes all required fields
+    const newCity = {
+      id: req.body.id,
+      name: req.body.name,
+      position: {
+        lat: req.body.lat,
+        lng: req.body.lng,
+      },
+    };
+
+    if (
+      !newCity.name ||
+      newCity.id === undefined ||
+      newCity.position.lat === undefined ||
+      newCity.position.lng === undefined
+    ) {
+      return res.status(400).json({ error: "Invalid city data structure" });
     }
+
+    // Find the user's cities document
+    let userCities = await City.findOne({ userEmail });
+    if (!userCities) {
+      // If no document exists for the user, create a new one
+      userCities = new City({ userEmail, cities: [newCity] });
+    } else {
+      // If the document exists, add the new city to the cities array
+      userCities.cities.push(newCity);
+    }
+
+    await userCities.save();
+
+    console.log("New city added successfully");
+    res.json({ message: "New city added successfully" });
   } catch (error) {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
@@ -310,6 +330,18 @@ app.post("/app/form/:id", async (req, res) => {
       );
       if (index === -1) {
         return res.status(404).json({ error: "City not found" });
+      }
+
+      // Ensure the city object has all required fields before updating
+      const cityToUpdate = userCities.cities[index];
+      if (
+        !cityToUpdate.name ||
+        !cityToUpdate.id ||
+        !cityToUpdate.position ||
+        cityToUpdate.position.lat === undefined ||
+        cityToUpdate.position.lng === undefined
+      ) {
+        return res.status(400).json({ error: "Invalid city data structure" });
       }
 
       // Update the latitude and longitude of the city

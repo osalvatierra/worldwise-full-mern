@@ -146,7 +146,7 @@ function CitiesProvider({ children, onLogin }) {
     try {
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
-        body: JSON.stringify(newCity), // Include the user's email in the city data
+        body: JSON.stringify({ ...newCity }), // Include the user's email in the city data
         headers: {
           "Content-Type": "application/json",
         },
