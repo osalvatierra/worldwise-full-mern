@@ -5,13 +5,13 @@ const fs = require("fs");
 
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
+const City = require("./models/city.model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const bycrypt = require("bcryptjs");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
-const simpleGit = require("simple-git");
 
 // Use morgan for logging
 app.use(morgan("combined"));
@@ -20,9 +20,6 @@ app.use(cookieParser());
 
 // Load environment variables from config.env file
 dotenv.config({ path: "./config.env" });
-
-// Initialize simple-git
-const git = simpleGit();
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STRING, {
@@ -53,70 +50,52 @@ app.use((req, res, next) => {
   next();
 });
 
-// let inOtherRoute = false;
-
 // Define a route to serve the dynamic JSON file
-app.get("/app/cities", (req, res) => {
+app.get("/app/cities", async (req, res) => {
   const authToken = req.cookies.xaccesstoken;
   console.log("Received cookies:", authToken); // Log the received cookies
-  const userEmail = req.query.userEmail;
-  console.log("email:", userEmail);
-  try {
-    // Read the user's JSON file based on their email address
-    fs.readFile(
-      `./data/${userEmail}_cities.json`,
-      "utf8",
-      (error, jsonData) => {
-        if (error) {
-          console.error("Error reading JSON file:", error);
-          res.status(500).json({ error: "Failed to import JSON file" });
-        } else {
-          try {
-            const parsedData = JSON.parse(jsonData);
 
-            // Check if parsedData contains 'cities' property
-            if (parsedData && parsedData.cities) {
-              // Return the 'cities' property as JSON response
-              res.json(parsedData.cities);
-            } else {
-              // If 'cities' property is missing, return an error
-              res.status(500).json({ error: "Cities data not found" });
-            }
-          } catch (parseError) {
-            console.error("Error parsing JSON data:", parseError);
-            res.status(500).json({ error: "Failed to parse JSON data" });
-          }
-        }
-      }
-    );
+  try {
+    const decoded = jwt.verify(authToken, "secrete123");
+    const userEmail = decoded.email;
+    console.log("email:", userEmail);
+
+    const userCities = await City.findOne({ userEmail });
+    if (userCities && userCities.cities) {
+      res.json(userCities.cities);
+    } else {
+      res.status(404).json({ error: "Cities data not found" });
+    }
   } catch (error) {
     console.log(error);
-    res.json({ status: "error", error: "invalid token" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
-app.post("/api/register", async (req, res) => {
-  console.log(req.body);
+app.post("/app/cities", async (req, res) => {
+  const authToken = req.cookies.xaccesstoken;
+  console.log("Received cookies:", authToken); // Log the received cookies
+
+  if (!authToken) {
+    return res.status(401).json({ error: "JWT token must be provided" });
+  }
 
   try {
-    const newPassword = await bycrypt.hash(req.body.password, 10);
-    await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: newPassword,
-      quote: req.body.quote,
-    });
+    const decoded = jwt.verify(authToken, "secrete123");
+    const userEmail = decoded.email;
 
-    // Create a new JSON file for the user's data
-    const userId = req.body.email; // You can use the email as the unique identifier
-    const userData = { cities: [] };
-    fs.writeFileSync(`./data/${userId}_cities.json`, JSON.stringify(userData));
-
-    res.json({ status: "ok" });
+    // Find the user's cities document and update it
+    const userCities = await City.findOne({ userEmail });
+    if (userCities) {
+      userCities.cities.push(req.body);
+      await userCities.save();
+      res.status(201).json(req.body);
+    } else {
+      res.status(404).json({ error: "Cities data not found" });
+    }
   } catch (error) {
     console.log(error);
-
-    res.json({ status: "error", error: "Duplicate email" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
@@ -288,79 +267,6 @@ app.get("/api/user-email", async (req, res) => {
   }
 });
 
-// Define a route to handle POST requests to add a city to a user's cities
-app.post("/app/cities", async (req, res) => {
-  const userEmail = req.query.email;
-  console.log("Received email:", userEmail); // Log the received email
-
-  const authToken = req.cookies.xaccesstoken;
-  console.log("Received cookies:", authToken); // Log the received cookies
-
-  // Check if JWT token exists in the request
-  if (!authToken) {
-    return res.status(401).json({ error: "JWT token must be provided" });
-  }
-
-  try {
-    const decoded = jwt.verify(authToken, "secrete123");
-    const userEmail = decoded.email;
-
-    // Read the user's JSON file based on their email address
-    fs.readFile(
-      `./data/${userEmail}_cities.json`,
-      "utf8",
-      (error, jsonData) => {
-        if (error) {
-          console.error("Error reading JSON file:", error);
-          res.status(500).json({ error: "Failed to import JSON file" });
-        } else {
-          try {
-            const parsedData = JSON.parse(jsonData);
-
-            // Check if parsedData contains 'cities' property
-            if (parsedData && parsedData.cities) {
-              // Append the new city data to the 'cities' array
-              parsedData.cities.push(req.body);
-            } else {
-              // If 'cities' property is missing, create a new one with the new city data
-              parsedData.cities = [req.body];
-            }
-
-            // Convert the updated data to JSON string
-            const updatedJsonData = JSON.stringify(parsedData);
-
-            // Write the updated JSON data back to the file
-            fs.writeFile(
-              `./data/${userEmail}_cities.json`,
-              updatedJsonData,
-              (writeError) => {
-                if (writeError) {
-                  console.error(
-                    "Error saving cities to JSON file:",
-                    writeError
-                  );
-                  res
-                    .status(500)
-                    .json({ error: "Error saving cities to JSON file" });
-                } else {
-                  console.log("Cities saved to JSON file successfully");
-                  res.status(201).json(req.body);
-                }
-              }
-            );
-          } catch (parseError) {
-            console.error("Error parsing JSON data:", parseError);
-            res.status(500).json({ error: "Failed to parse JSON data" });
-          }
-        }
-      }
-    );
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
-  }
-});
-
 // Define a route to handle lat/lng specific cities drill down
 app.post("/app/form/:id", async (req, res) => {
   const authToken = req.cookies.xaccesstoken;
@@ -370,66 +276,29 @@ app.post("/app/form/:id", async (req, res) => {
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
 
-    // Read the user's JSON file based on their email address
-    fs.readFile(
-      `./data/${userEmail}_cities.json`,
-      "utf8",
-      async (error, jsonData) => {
-        if (error) {
-          console.error("Error reading JSON file:", error);
-          res.status(500).json({ error: "Failed to import JSON file" });
-        } else {
-          try {
-            const parsedData = JSON.parse(jsonData);
-
-            // Find the index of the city with the specified ID
-            const index = parsedData.cities.findIndex(
-              (city) => city.id === parseInt(req.params.id)
-            );
-
-            if (index === -1) {
-              // City not found
-              return res.status(404).json({ error: "City not found" });
-            }
-
-            // Update the latitude and longitude of the city
-            parsedData.cities[index].position.lat = req.body.lat;
-            parsedData.cities[index].position.lng = req.body.lng;
-
-            // Convert the updated data to JSON string
-            const updatedJsonData = JSON.stringify(parsedData);
-
-            // Write the updated JSON data back to the file
-            fs.writeFile(
-              `./data/${userEmail}_cities.json`,
-              updatedJsonData,
-              (writeError) => {
-                if (writeError) {
-                  console.error(
-                    "Error saving cities to JSON file:",
-                    writeError
-                  );
-                  res
-                    .status(500)
-                    .json({ error: "Error saving cities to JSON file" });
-                } else {
-                  console.log("City coordinates updated successfully");
-                  res.json({
-                    message: "City coordinates updated successfully",
-                  });
-                }
-              }
-            );
-          } catch (parseError) {
-            console.error("Error parsing JSON data:", parseError);
-            res.status(500).json({ error: "Failed to parse JSON data" });
-          }
-        }
+    // Find the user's cities document
+    const userCities = await City.findOne({ userEmail });
+    if (userCities) {
+      const index = userCities.cities.findIndex(
+        (city) => city.id === parseInt(req.params.id)
+      );
+      if (index === -1) {
+        return res.status(404).json({ error: "City not found" });
       }
-    );
+
+      // Update the latitude and longitude of the city
+      userCities.cities[index].position.lat = req.body.lat;
+      userCities.cities[index].position.lng = req.body.lng;
+      await userCities.save();
+
+      console.log("City coordinates updated successfully");
+      res.json({ message: "City coordinates updated successfully" });
+    } else {
+      res.status(404).json({ error: "Cities data not found" });
+    }
   } catch (error) {
     console.log(error);
-    res.json({ status: "error", error: "invalid token" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
@@ -441,63 +310,28 @@ app.delete("/app/cities/:id", async (req, res) => {
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
 
-    // Read the user's JSON file based on their email address
-    fs.readFile(
-      `./data/${userEmail}_cities.json`,
-      "utf8",
-      (error, jsonData) => {
-        if (error) {
-          console.error("Error reading JSON file:", error);
-          res.status(500).json({ error: "Failed to import JSON file" });
-        } else {
-          try {
-            const parsedData = JSON.parse(jsonData);
-
-            // Find the index of the city with the specified ID
-            const index = parsedData.cities.findIndex(
-              (city) => city.id === parseInt(req.params.id)
-            );
-
-            if (index === -1) {
-              // City not found
-              return res.status(404).json({ error: "City not found" });
-            }
-
-            // Remove the city from the array
-            parsedData.cities.splice(index, 1);
-
-            // Convert the updated data to JSON string
-            const updatedJsonData = JSON.stringify(parsedData);
-
-            // Write the updated JSON data back to the file
-            fs.writeFile(
-              `./data/${userEmail}_cities.json`,
-              updatedJsonData,
-              (writeError) => {
-                if (writeError) {
-                  console.error(
-                    "Error saving cities to JSON file:",
-                    writeError
-                  );
-                  res
-                    .status(500)
-                    .json({ error: "Error saving cities to JSON file" });
-                } else {
-                  console.log("City deleted successfully");
-                  res.json({ message: "City deleted successfully" });
-                }
-              }
-            );
-          } catch (parseError) {
-            console.error("Error parsing JSON data:", parseError);
-            res.status(500).json({ error: "Failed to parse JSON data" });
-          }
-        }
+    // Find the user's cities document
+    const userCities = await City.findOne({ userEmail });
+    if (userCities) {
+      const index = userCities.cities.findIndex(
+        (city) => city.id === parseInt(req.params.id)
+      );
+      if (index === -1) {
+        return res.status(404).json({ error: "City not found" });
       }
-    );
+
+      // Remove the city from the array
+      userCities.cities.splice(index, 1);
+      await userCities.save();
+
+      console.log("City deleted successfully");
+      res.json({ message: "City deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Cities data not found" });
+    }
   } catch (error) {
     console.log(error);
-    res.json({ status: "error", error: "invalid token" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
@@ -509,44 +343,31 @@ app.get("/app/cities/:id", async (req, res) => {
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
 
-    // Read the user's JSON file based on their email address
-    fs.readFile(
-      `./data/${userEmail}_cities.json`,
-      "utf8",
-      async (error, jsonData) => {
-        if (error) {
-          console.error("Error reading JSON file:", error);
-          res.status(500).json({ error: "Failed to import JSON file" });
-        } else {
-          try {
-            const parsedData = JSON.parse(jsonData);
+    // Find the user's cities document in the database
+    const userCities = await City.findOne({ userEmail });
+    if (!userCities) {
+      return res.status(404).json({ error: "Cities data not found" });
+    }
 
-            // Find the city with the given ID
-            const city = parsedData.cities.find(
-              (city) => city.id === parseInt(req.params.id)
-            );
-
-            // If city is not found, return a 404 Not Found response
-            if (!city) {
-              return res.status(404).json({ error: "City not found" });
-            }
-
-            // Add latitude and longitude to the city object
-            city.lat = city.position.lat;
-            city.lng = city.position.lng;
-
-            // Return the city object as JSON in the response
-            res.json(city);
-          } catch (parseError) {
-            console.error("Error parsing JSON data:", parseError);
-            res.status(500).json({ error: "Failed to parse JSON data" });
-          }
-        }
-      }
+    // Find the city with the given ID
+    const city = userCities.cities.find(
+      (city) => city.id === parseInt(req.params.id)
     );
+
+    // If the city is not found, return a 404 Not Found response
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+
+    // Add latitude and longitude to the city object
+    city.lat = city.position.lat;
+    city.lng = city.position.lng;
+
+    // Return the city object as JSON in the response
+    res.json(city);
   } catch (error) {
     console.log(error);
-    res.json({ status: "error", error: "invalid token" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
