@@ -144,7 +144,7 @@ app.post("/api/login", async (req, res) => {
       email: req.body.email,
     });
 
-    const isPasswordValid = await bycrypt.compare(
+    const isPasswordValid = await bcrypt.compare(
       req.body.password,
       user.password
     );
