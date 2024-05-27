@@ -65,7 +65,7 @@ function reducer(state, action) {
       };
 
     default:
-      throw new Error("Unkown action type:");
+      throw new Error("Unknown action type:");
   }
 }
 
@@ -78,23 +78,10 @@ function CitiesProvider({ children, onLogin }) {
   const fetchCities = useCallback(async () => {
     dispatch({ type: "loading" });
     try {
-      // Fetch user's email from the server
-      const emailRes = await fetch(`${BASE_URL}/api/user-email`, {
+      const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "GET",
         credentials: "include", // Include cookies in the request
       });
-      if (!emailRes.ok) {
-        throw new Error("Failed to fetch user email");
-      }
-      const userEmail = await emailRes.json();
-
-      const res = await fetch(
-        `${BASE_URL}/app/cities?userEmail=${userEmail.email}`,
-        {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        }
-      );
       console.log("Response received:", res);
 
       if (!res.ok) {
@@ -135,23 +122,9 @@ function CitiesProvider({ children, onLogin }) {
 
       dispatch({ type: "loading" });
       try {
-        // Fetch user's email from the server
-        const emailRes = await fetch(`${BASE_URL}/api/user-email`, {
+        const cityRes = await fetch(`${BASE_URL}/app/cities/${id}`, {
           credentials: "include", // Include cookies in the request
         });
-        if (!emailRes.ok) {
-          throw new Error("Failed to fetch user email");
-        }
-        const emailData = await emailRes.json();
-        const userEmail = emailData.email;
-
-        // Use the user's email to fetch city data
-        const cityRes = await fetch(
-          `${BASE_URL}/app/cities/${id}?userEmail=${userEmail}`,
-          {
-            credentials: "include", // Include cookies in the request
-          }
-        );
         if (!cityRes.ok) {
           throw new Error("Failed to fetch city data");
         }
@@ -171,10 +144,9 @@ function CitiesProvider({ children, onLogin }) {
   async function createCity(newCity) {
     dispatch({ type: "loading" });
     try {
-      // Use the user's email to create the city data
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
-        body: JSON.stringify({ ...newCity }), // Include the user's email in the city data
+        body: JSON.stringify(newCity), // Include the user's email in the city data
         headers: {
           "Content-Type": "application/json",
         },
