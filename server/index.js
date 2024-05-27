@@ -99,6 +99,32 @@ app.post("/app/cities", async (req, res) => {
   }
 });
 
+app.post("/api/register", async (req, res) => {
+  console.log(req.body);
+
+  try {
+    const newPassword = await bcrypt.hash(req.body.password, 10);
+    await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: newPassword,
+      quote: req.body.quote,
+    });
+
+    // Create a new entry in the cities collection for the user's data
+    await City.create({
+      userEmail: req.body.email,
+      cities: [],
+    });
+
+    res.json({ status: "ok" });
+  } catch (error) {
+    console.log(error);
+
+    res.json({ status: "error", error: "Duplicate email" });
+  }
+});
+
 // Define a function to generate access token
 const generateAccessToken = (user) => {
   return jwt.sign(user, "secrete123", { expiresIn: "20m" });
