@@ -119,6 +119,11 @@ app.post("/app/cities", async (req, res) => {
   }
 });
 
+app.post("/app/cities", (req, res) => {
+  console.log("Request body:", req.body); // Log the request body
+  //... rest of the code
+});
+
 app.post("/api/register", async (req, res) => {
   console.log(req.body);
 

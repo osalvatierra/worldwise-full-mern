@@ -144,9 +144,25 @@ function CitiesProvider({ children, onLogin }) {
   async function createCity(newCity) {
     dispatch({ type: "loading" });
     try {
+      // Ensure the new city data includes all required fields
+      if (
+        !newCity.name ||
+        newCity.id === undefined ||
+        newCity.lat === undefined ||
+        newCity.lng === undefined
+      ) {
+        throw new Error("Invalid city data structure");
+      }
+
+      // Use the user's email to create the city data
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
-        body: JSON.stringify({ ...newCity }), // Include the user's email in the city data
+        body: JSON.stringify({
+          id: newCity.id,
+          name: newCity.name,
+          lat: newCity.lat,
+          lng: newCity.lng,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
