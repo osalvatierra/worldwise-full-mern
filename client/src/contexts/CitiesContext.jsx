@@ -160,8 +160,10 @@ function CitiesProvider({ children, onLogin }) {
         body: JSON.stringify({
           id: newCity.id,
           name: newCity.name,
-          lat: newCity.lat,
-          lng: newCity.lng,
+          position: {
+            lat: newCity.lat,
+            lng: newCity.lng,
+          },
         }),
         headers: {
           "Content-Type": "application/json",
