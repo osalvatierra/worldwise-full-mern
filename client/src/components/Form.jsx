@@ -29,7 +29,7 @@ function Form() {
   const navigate = useNavigate();
 
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
-  const [cityName, setCityName] = useState("");
+  const [name, setCityName] = useState("");
   const [country, setCountry] = useState("");
   const [date, setDate] = useState(new Date());
   const [notes, setNotes] = useState("");
@@ -80,10 +80,10 @@ function Form() {
 
   async function handleSumbit(e) {
     e.preventDefault();
-    if (!cityName || !date) return;
+    if (!name || !date) return;
 
     const newCity = {
-      cityName,
+      name,
       country,
       emoji,
       date,
@@ -113,13 +113,13 @@ function Form() {
         <input
           id="cityName"
           onChange={(e) => setCityName(e.target.value)}
-          value={cityName}
+          value={name}
         />
         <span className={styles.flag}>{emoji}</span>
       </div>
 
       <div className={styles.row}>
-        <label htmlFor="date">When did you go to {cityName}?</label>
+        <label htmlFor="date">When did you go to {name}?</label>
         {/* <input
           id="date"
           onChange={(e) => setDate(e.target.value)}
@@ -135,7 +135,7 @@ function Form() {
       </div>
 
       <div className={styles.row}>
-        <label htmlFor="notes">Notes about your trip to {cityName}</label>
+        <label htmlFor="notes">Notes about your trip to {name}</label>
         <textarea
           id="notes"
           onChange={(e) => setNotes(e.target.value)}

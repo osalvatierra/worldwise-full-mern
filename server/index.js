@@ -84,9 +84,13 @@ app.post("/app/cities", async (req, res) => {
     const newCity = {
       id: req.body.id,
       name: req.body.name,
+      country: req.body.country,
+      emoji: req.body.emoji,
+      date: req.body.date,
+      notes: req.body.notes,
       position: {
-        lat: req.body.lat,
-        lng: req.body.lng,
+        lat: req.body.position.lat,
+        lng: req.body.position.lng,
       },
     };
 

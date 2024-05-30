@@ -148,13 +148,12 @@ function CitiesProvider({ children, onLogin }) {
       if (
         !newCity.name ||
         newCity.id === undefined ||
-        newCity.lat === undefined ||
-        newCity.lng === undefined
+        newCity.position.lat === undefined || // Updated validation to match position
+        newCity.position.lng === undefined // Updated validation to match position
       ) {
         throw new Error("Invalid city data structure");
       }
 
-      // Use the user's email to create the city data
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
         body: JSON.stringify(newCity),
