@@ -157,14 +157,7 @@ function CitiesProvider({ children, onLogin }) {
       // Use the user's email to create the city data
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
-        body: JSON.stringify({
-          id: newCity.id,
-          name: newCity.name,
-          position: {
-            lat: newCity.lat,
-            lng: newCity.lng,
-          },
-        }),
+        body: JSON.stringify(newCity),
         headers: {
           "Content-Type": "application/json",
         },
