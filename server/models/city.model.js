@@ -7,9 +7,9 @@ const CitySchema = new mongoose.Schema(
       {
         id: { type: Number, required: true },
         name: { type: String, required: true },
-        country: { type: String, required: true },
-        emoji: { type: String, required: true },
-        date: { type: Date, required: true },
+        country: { type: String, required: false },
+        emoji: { type: String, required: false },
+        date: { type: Date, required: false },
         notes: { type: String },
         position: {
           lat: { type: Number, required: true },
