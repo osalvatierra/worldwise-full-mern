@@ -77,20 +77,29 @@ app.post("/app/cities", async (req, res) => {
   console.log("Received cookies:", req.cookies);
 
   try {
+    const { id, name, country, emoji, date, notes, position } = req.body;
+
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
 
+    // Validate the position object
+    if (!position || position.lat === undefined || position.lng === undefined) {
+      return res.status(400).json({ error: "Invalid city data structure" });
+    }
+
+    const { lat, lng } = position;
+
     // Ensure the new city data includes all required fields
     const newCity = {
-      id: req.body.id,
-      name: req.body.name,
-      country: req.body.country,
-      emoji: req.body.emoji,
-      date: req.body.date,
-      notes: req.body.notes,
+      id,
+      name,
+      country,
+      emoji,
+      date,
+      notes,
       position: {
-        lat: req.body.position.lat,
-        lng: req.body.position.lng,
+        lat,
+        lng,
       },
     };
 
