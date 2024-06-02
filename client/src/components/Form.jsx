@@ -108,9 +108,9 @@ function Form() {
       onSubmit={handleSumbit}
     >
       <div className={styles.row}>
-        <label htmlFor="cityName">City name</label>
+        <label htmlFor="name">City name</label>
         <input
-          id="cityName"
+          id="name"
           onChange={(e) => setCityName(e.target.value)}
           value={name}
         />
