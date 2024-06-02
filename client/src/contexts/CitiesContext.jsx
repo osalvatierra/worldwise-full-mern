@@ -147,9 +147,13 @@ function CitiesProvider({ children, onLogin }) {
       // Ensure the new city data includes all required fields
       if (
         !newCity.name ||
+        !newCity.country ||
+        !newCity.emoji ||
+        !newCity.date ||
         newCity.id === undefined ||
-        newCity.position.lat === undefined || // Updated validation to match position
-        newCity.position.lng === undefined // Updated validation to match position
+        !newCity.position ||
+        newCity.position.lat === undefined ||
+        newCity.position.lng === undefined
       ) {
         throw new Error("Invalid city data structure");
       }
