@@ -91,8 +91,7 @@ function Form() {
       position: { lat, lng },
       id,
     };
-    console.log("FORM COMPONENT");
-    console.log(newCity);
+    console.log("Submitting new city:", newCity);
     await createCity(newCity);
     navigate("/app/cities");
   }
