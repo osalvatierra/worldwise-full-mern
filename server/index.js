@@ -75,7 +75,7 @@ app.get("/app/cities", async (req, res) => {
 app.post("/app/cities", async (req, res) => {
   const authToken = req.cookies.xaccesstoken;
   console.log("Received cookies:", req.cookies);
-
+  console.log("Received city data:", req.body); // Add logging here
   try {
     const { id, name, country, emoji, date, notes, position } = req.body;
 
