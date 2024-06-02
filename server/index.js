@@ -83,11 +83,19 @@ app.post("/app/cities", async (req, res) => {
     const userEmail = decoded.email;
 
     // Validate the position object
-    if (!position || position.lat === undefined || position.lng === undefined) {
+    if (
+      !name ||
+      !country ||
+      !emoji ||
+      !date ||
+      !position ||
+      position.lat === undefined ||
+      position.lng === undefined
+    ) {
       return res.status(400).json({ error: "Invalid city data structure" });
     }
 
-    const { lat, lng } = position;
+    // const { lat, lng } = position;
 
     // Ensure the new city data includes all required fields
     const newCity = {
@@ -97,26 +105,14 @@ app.post("/app/cities", async (req, res) => {
       emoji,
       date,
       notes,
-      position: {
-        lat,
-        lng,
-      },
+      position,
     };
-
-    if (
-      !newCity.name ||
-      newCity.id === undefined ||
-      newCity.position.lat === undefined ||
-      newCity.position.lng === undefined
-    ) {
-      return res.status(400).json({ error: "Invalid city data structure" });
-    }
 
     // Find the user's cities document
     let userCities = await City.findOne({ userEmail });
     if (!userCities) {
       // If no document exists for the user, create a new one
-      userCities = new City({ userEmail, cities: [newCity] });
+      userCities = new City({ userEmail, cities: newCity });
     } else {
       // If the document exists, add the new city to the cities array
       userCities.cities.push(newCity);
