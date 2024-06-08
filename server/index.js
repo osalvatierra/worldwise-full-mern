@@ -73,9 +73,10 @@ app.get("/app/cities", async (req, res) => {
 });
 
 app.post("/app/cities", async (req, res) => {
+  console.log("Received city data:", req.body); // Add logging here
+
   const authToken = req.cookies.xaccesstoken;
   console.log("Received cookies:", req.cookies);
-  console.log("Received city data:", req.body); // Add logging here
   try {
     const { id, name, country, emoji, date, notes, position } = req.body;
 
@@ -92,10 +93,9 @@ app.post("/app/cities", async (req, res) => {
       position.lat === undefined ||
       position.lng === undefined
     ) {
+      console.log("Invalid city data structure:", req.body);
       return res.status(400).json({ error: "Invalid city data structure" });
     }
-
-    // const { lat, lng } = position;
 
     // Ensure the new city data includes all required fields
     const newCity = {
@@ -108,11 +108,13 @@ app.post("/app/cities", async (req, res) => {
       position,
     };
 
+    console.log("Saving city to database:", newCity);
+
     // Find the user's cities document
     let userCities = await City.findOne({ userEmail });
     if (!userCities) {
       // If no document exists for the user, create a new one
-      userCities = new City({ userEmail, cities: newCity });
+      userCities = new City({ userEmail, cities: [newCity] });
     } else {
       // If the document exists, add the new city to the cities array
       userCities.cities.push(newCity);
@@ -121,7 +123,8 @@ app.post("/app/cities", async (req, res) => {
     await userCities.save();
 
     console.log("New city added successfully");
-    res.json({ message: "New city added successfully" });
+    res.status(201).json(userCities);
+    // res.json({ message: "New city added successfully" });
   } catch (error) {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });

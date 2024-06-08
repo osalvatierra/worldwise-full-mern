@@ -158,6 +158,8 @@ function CitiesProvider({ children, onLogin }) {
         throw new Error("Invalid city data structure");
       }
 
+      console.log("Creating city with data:", newCity);
+
       const res = await fetch(`${BASE_URL}/app/cities`, {
         method: "POST",
         body: JSON.stringify(newCity),
@@ -170,7 +172,7 @@ function CitiesProvider({ children, onLogin }) {
         throw new Error("Failed to create city data");
       }
       const data = await res.json();
-      console.log(data);
+      console.log("City created successfully:", data);
       dispatch({ type: "city/created", payload: data });
     } catch (error) {
       dispatch({

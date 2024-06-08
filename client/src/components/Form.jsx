@@ -83,13 +83,13 @@ function Form() {
     if (!name || !date) return;
 
     const newCity = {
+      id,
       name,
       country,
       emoji,
       date,
       notes,
       position: { lat, lng },
-      id,
     };
     console.log("Submitting new city:", newCity);
     await createCity(newCity);
