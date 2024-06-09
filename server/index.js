@@ -1,4 +1,7 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+
 const app = express();
 const cors = require("cors");
 const fs = require("fs");
@@ -6,7 +9,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const City = require("./models/city.model");
-const cookieParser = require("cookie-parser");
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const morgan = require("morgan");
@@ -16,6 +19,7 @@ const path = require("path");
 // Use morgan for logging
 app.use(morgan("combined"));
 app.use(express.json());
+app.use(bodyParser.json()); // Add this line to parse JSON bodies
 app.use(cookieParser());
 
 // Load environment variables from config.env file
