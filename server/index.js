@@ -83,6 +83,7 @@ app.post("/app/cities", async (req, res) => {
   console.log("Received cookies:", req.cookies);
   try {
     const { id, name, country, emoji, date, notes, position } = req.body;
+    let { lat, lng } = position;
 
     const decoded = jwt.verify(authToken, "secrete123");
     const userEmail = decoded.email;
@@ -109,7 +110,7 @@ app.post("/app/cities", async (req, res) => {
       emoji,
       date,
       notes,
-      position,
+      position: { lat, lng },
     };
 
     console.log("Saving city to database:", newCity);
