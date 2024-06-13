@@ -13,6 +13,11 @@ function AppLayout() {
   const lat = queryParams.get("lat");
   const lng = queryParams.get("lng");
 
+  console.log("Testing presence of lat: " + lat);
+
+  const validLat = lat !== null ? parseFloat(lat) : null;
+  const validLng = lng !== null ? parseFloat(lng) : null;
+
   const { cities } = useCities();
 
   console.log(queryParams);
@@ -22,8 +27,8 @@ function AppLayout() {
       <Map
         cities={cities}
         cityId={parseInt(id)}
-        lat={parseFloat(lat)}
-        lng={parseFloat(lng)}
+        lat={validLat}
+        lng={validLng}
       />
       <User />
     </div>
