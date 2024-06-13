@@ -95,10 +95,10 @@ function CitiesProvider({ children, onLogin }) {
       console.log("Cities extracted:", cities);
 
       // Use map to execute a function for each city
-      const positions = cities.map((city) => {
+      const position = cities.map((city) => {
         return city.position; // Return the position object of each city
       });
-      console.log("Positions extracted:", positions);
+      console.log("Positions extracted:", position);
       dispatch({ type: "cities/loaded", payload: data });
     } catch (error) {
       console.error("Error fetching cities:", error); // Log the error message
