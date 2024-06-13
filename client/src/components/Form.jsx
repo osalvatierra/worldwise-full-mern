@@ -27,7 +27,7 @@ function Form() {
   const [lat, lng] = useUrlPosition();
   const { createCity, isLoading } = useCities();
   const navigate = useNavigate();
-
+  console.log("testing lat from Form component: " + lat);
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
   const [name, setCityName] = useState("");
   const [country, setCountry] = useState("");
