@@ -25,7 +25,7 @@ const formatDate = (date) => {
 
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
-  const { cityName, emoji, date, id, position } = city;
+  const { name, emoji, date, id, position } = city;
   const { lat, lng } = position;
 
   // const [position, setPosition] = useState({ lat: null, lng: null });
@@ -49,7 +49,7 @@ function CityItem({ city }) {
         to={`/app/cities/${id}?lat=${lat}&lng=${lng}`}
       >
         <span className={styles.emoji}>{emoji}</span>
-        <h3 className={styles.name}>{cityName}</h3>
+        <h3 className={styles.name}>{name}</h3>
         <time className={styles.date}>({formatDate(date)})</time>
 
         <button className={styles.deleteBtn} onClick={handleClick}>
