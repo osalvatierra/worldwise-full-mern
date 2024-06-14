@@ -26,20 +26,20 @@ const formatDate = (date) => {
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
   const { name, emoji, date, id, position } = city;
-  const { lat, lng } = position;
+  // const { lat position.lat, lng } = position;
 
-  // const [position, setPosition] = useState({ lat: null, lng: null });
+  // Ensure position is defined before destructuring lat and lng
+  const lat = position?.lat;
+  const lng = position?.lng;
 
-  // useEffect(() => {
-  //   setPosition(currentCity.position);
-  // }, [currentCity]);
+  console.log("City object:", city);
+  console.log("Position object:", position);
 
   function handleClick(e) {
     e.preventDefault();
     deleteCity(id);
   }
 
-  console.log(position);
   return (
     <li>
       <Link
