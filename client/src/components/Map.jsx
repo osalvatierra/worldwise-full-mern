@@ -59,18 +59,21 @@ function Map({ cityId, lat, lng }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         />
-        {cities.map((city) => (
-          <Marker
-            position={[city.position.lat, city.position.lng]}
-            key={city.id}
-          >
-            <Popup>
-              <span>{city.emoni}</span>
-              <span>{city.cityName}</span>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-        ))}
+        {cities.map(
+          (city) =>
+            city.position && ( // Ensure city.position is defined
+              <Marker
+                position={[city.position.lat, city.position.lng]}
+                key={city.id}
+              >
+                <Popup>
+                  <span>{city.emoni}</span>
+                  <span>{city.cityName}</span>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            )
+        )}
 
         <ChangeCenter position={mapPosition} />
         <DetectClick />
