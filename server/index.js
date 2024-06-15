@@ -110,7 +110,7 @@ app.post("/app/cities", async (req, res) => {
       emoji,
       date,
       notes,
-      position: { lat, lng },
+      position,
     };
 
     console.log("Saving city to database:", newCity);
@@ -128,7 +128,7 @@ app.post("/app/cities", async (req, res) => {
     await userCities.save();
 
     console.log("New city added successfully");
-    res.status(201).json(userCities);
+    res.status(201).json(newCity);
     // res.json({ message: "New city added successfully" });
   } catch (error) {
     console.log(error);
