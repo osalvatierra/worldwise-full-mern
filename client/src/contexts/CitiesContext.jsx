@@ -96,6 +96,10 @@ function CitiesProvider({ children, onLogin }) {
 
       // Use map to execute a function for each city
       const position = cities.map((city) => {
+        console.log(
+          "Grabing Cities from fetch, CitiesContext component: ",
+          city
+        );
         return city.position; // Return the position object of each city
       });
       console.log("Positions extracted:", position);
