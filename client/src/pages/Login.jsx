@@ -24,7 +24,7 @@ export default function Login() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchCities(); // Call fetchCities function upon successful login
-      navigate("/app", { replace: true });
+      navigate("/app/cities", { replace: true });
     }
   }, [isAuthenticated, navigate, fetchCities]);
 
