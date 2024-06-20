@@ -451,11 +451,13 @@ app.get("/app/cities/:id", async (req, res) => {
 });
 
 // Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "../client/dist/assets")));
 
 // Catch-all route to serve the React app's index.html file
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  res.sendFile(
+    path.join(__dirname, "../client/dist/assets", "index-404a8eab.js")
+  );
 });
 
 app.listen(1337, () => {
