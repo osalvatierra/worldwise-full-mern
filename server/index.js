@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
