@@ -1,25 +1,23 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
-const app = express();
 const cors = require("cors");
-const fs = require("fs");
+const morgan = require("morgan");
+
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const dotenv = require("dotenv");
 
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const City = require("./models/city.model");
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const morgan = require("morgan");
-const dotenv = require("dotenv");
-const path = require("path");
+const app = express();
 
 // Use morgan for logging
 app.use(morgan("combined"));
 app.use(express.json());
-app.use(bodyParser.json()); // Add this line to parse JSON bodies
+app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Load environment variables from config.env file
@@ -56,8 +54,9 @@ app.use((req, res, next) => {
 
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
+  console.log("Route /app/cities accessed");
   const authToken = req.cookies.xaccesstoken;
-  console.log("Received cookies:", authToken); // Log the received cookies
+  console.log("Received cookies:", authToken);
 
   try {
     const decoded = jwt.verify(authToken, "secrete123");
@@ -448,6 +447,14 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "build")));
+
+// Catch-all route to serve the React app for unknown routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.listen(1337, () => {
