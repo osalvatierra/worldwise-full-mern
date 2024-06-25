@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { CitiesProvider } from "./contexts/CitiesContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -52,8 +52,6 @@ function App() {
                 <Route path="cities/:id" element={<AppLayout />} />
                 <Route path="countries" element={<CountryList />} />
                 <Route path="form" element={<Form />} />
-                {/* default redirect to home page */}
-                <Route path="*" element={<Navigate to="/" />} />
               </Route>
 
               <Route path="*" element={<PageNotFound />} />
