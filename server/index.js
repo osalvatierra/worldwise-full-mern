@@ -455,6 +455,7 @@ app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // Catch-all route to serve the React app's index.html file
 app.get("*", (req, res) => {
+  console.log("Catch-all triggered");
   res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
