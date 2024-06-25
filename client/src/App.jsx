@@ -52,6 +52,8 @@ function App() {
                 <Route path="cities/:id" element={<AppLayout />} />
                 <Route path="countries" element={<CountryList />} />
                 <Route path="form" element={<Form />} />
+                {/* default redirect to home page */}
+                <Route path="*" element={<Navigate to="/" />} />
               </Route>
 
               <Route path="*" element={<PageNotFound />} />
