@@ -24,6 +24,12 @@ app.use(cookieParser());
 // Load environment variables from config.env file
 dotenv.config({ path: "./config.env" });
 
+// Define the path to the dist directory
+const DIST_DIR = path.join(__dirname, "..", "client", "dist");
+
+// Serve static files from the React app's build directory
+app.use(express.static(DIST_DIR));
+
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STRING, {
   useNewUrlParser: true,
@@ -451,6 +457,12 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
+});
+
+// Catch-all route to serve the React app's index.html file
+app.get("*", (req, res) => {
+  console.log("Catch-all triggered");
+  res.sendFile(path.join(DIST_DIR, "index.html"));
 });
 
 app.listen(1337, () => {
