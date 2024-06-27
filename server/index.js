@@ -453,12 +453,6 @@ app.get("/app/cities/:id", async (req, res) => {
   }
 });
 
-// Catch-all route to serve the React app's index.html file
-app.get("*", async (req, res) => {
-  console.log("Catch-all route triggered for URL:", req.url);
-  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
-});
-
 app.listen(1337, () => {
   console.log("Server started on 1337");
 });
