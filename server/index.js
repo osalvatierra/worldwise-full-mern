@@ -450,21 +450,6 @@ app.get("/app/cities/:id", async (req, res) => {
   }
 });
 
-// Log all requests
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-// Catch-all route to serve the React app's index.html file
-app.get("*", (req, res) => {
-  console.log("Catch-all triggered");
-  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
-});
-
 app.listen(1337, () => {
   console.log("Server started on 1337");
 });
