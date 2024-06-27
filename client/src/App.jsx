@@ -33,7 +33,6 @@ function App() {
         <BrowserRouter>
           <Suspense fallback={<SpinnerFullPage />}>
             <Routes>
-              <Route path="*" element={<PageNotFound />} />
               <Route index element={<Homepage />} />
               <Route path="product" element={<Product />} />
               <Route path="pricing" element={<Pricing />} />
@@ -53,6 +52,7 @@ function App() {
                 <Route path="cities/:id" element={<AppLayout />} />
                 <Route path="countries" element={<CountryList />} />
                 <Route path="form" element={<Form />} />
+                <Route path="*" element={<PageNotFound />} />
               </Route>
             </Routes>
           </Suspense>
