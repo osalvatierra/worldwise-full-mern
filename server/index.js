@@ -24,9 +24,6 @@ app.use(cookieParser());
 // Load environment variables from config.env file
 dotenv.config({ path: "./config.env" });
 
-// Define the path to the dist directory
-const DIST_DIR = path.join(__dirname, "..", "client", "dist");
-
 const corsOptions = {
   origin: "https://worldwise-full-mern.onrender.com",
   credentials: true,
@@ -58,6 +55,9 @@ app.use((req, res, next) => {
   res.setHeader("Cache-Control", "no-cache");
   next();
 });
+
+// Define the path to the dist directory
+const DIST_DIR = path.join(__dirname, "..", "client", "dist");
 
 // Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, "../client/dist")));
