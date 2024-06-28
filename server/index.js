@@ -67,20 +67,6 @@ fs.access(distPath, fs.constants.F_OK, (err) => {
     );
   } else {
     console.log("dist directory is accessible:", distPath);
-
-    // Serve static files from the React app's build directory
-    app.use(express.static(distPath));
-
-    // Middleware to log requests for debugging
-    app.use((req, res, next) => {
-      console.log(`Request received: ${req.method} ${req.url}`);
-      next();
-    });
-
-    // Serve React app for all other routes
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
   }
 });
 
@@ -479,6 +465,20 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
+});
+
+// Serve static files from the React app's build directory
+app.use(express.static(distPath));
+
+// Middleware to log requests for debugging
+app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
+
+// Serve React app for all other routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
 });
 
 app.listen(1337, () => {
