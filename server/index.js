@@ -53,11 +53,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Define the path to the dist directory
-const DIST_DIR = path.join(__dirname, "..", "client", "dist");
-
 // Serve static files from the React app's build directory
-app.use(express.static(DIST_DIR));
+app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
@@ -459,7 +456,7 @@ app.get("/app/cities/:id", async (req, res) => {
 // Catch-all route to serve the React app's index.html file
 app.get("*", (req, res) => {
   console.log("Catch-all triggered");
-  res.sendFile(path.join(DIST_DIR, "index.html"));
+  res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
 });
 
 app.listen(1337, () => {
