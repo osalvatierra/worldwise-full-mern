@@ -59,9 +59,6 @@ const DIST_DIR = path.join(__dirname, "..", "client", "dist");
 // Serve static files from the React app's build directory
 app.use(express.static(DIST_DIR));
 
-// Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
   console.log("Route /app/cities accessed");
