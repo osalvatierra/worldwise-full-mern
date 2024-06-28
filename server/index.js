@@ -54,7 +54,7 @@ app.use((req, res, next) => {
 });
 
 // Define the path to the dist directory
-const DIST_DIR = path.join(__dirname, "..", "client", "dist");
+const distPath = path.join(__dirname, "..", "client", "dist");
 console.log("Resolved dist path:", distPath);
 
 // Check if the path exists and is accessible
@@ -473,12 +473,6 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
-});
-
-// Catch-all route to serve the React app's index.html file
-app.get("*", (req, res) => {
-  console.log("Catch-all triggered");
-  res.sendFile(path.join(DIST_DIR, "index.html"));
 });
 
 app.listen(1337, () => {
