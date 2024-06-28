@@ -53,8 +53,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+// Define the path to the dist directory
+const DIST_DIR = path.join(__dirname, "..", "client", "dist");
+console.log("Resolved dist path:", distPath);
+
+// Check if the path exists and is accessible
+const fs = require("fs");
+fs.access(distPath, fs.constants.F_OK, (err) => {
+  if (err) {
+    console.error(
+      "dist directory does not exist or is not accessible:",
+      distPath
+    );
+  } else {
+    console.log("dist directory is accessible:", distPath);
+
+    // Serve static files from the React app's build directory
+    app.use(express.static(distPath));
+
+    // Serve React app for all other routes
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
+});
 
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
@@ -456,7 +478,7 @@ app.get("/app/cities/:id", async (req, res) => {
 // Catch-all route to serve the React app's index.html file
 app.get("*", (req, res) => {
   console.log("Catch-all triggered");
-  res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
+  res.sendFile(path.join(DIST_DIR, "index.html"));
 });
 
 app.listen(1337, () => {
