@@ -70,6 +70,15 @@ fs.access(distPath, fs.constants.F_OK, (err) => {
   }
 });
 
+// Serve static files from the React app's build directory
+app.use(express.static(distPath));
+
+// Middleware to log requests for debugging
+app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
+
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
   console.log("Route /app/cities accessed");
@@ -467,16 +476,7 @@ app.get("/app/cities/:id", async (req, res) => {
   }
 });
 
-// Serve static files from the React app's build directory
-app.use(express.static(distPath));
-
-// Middleware to log requests for debugging
-app.use((req, res, next) => {
-  console.log(`Request received: ${req.method} ${req.url}`);
-  next();
-});
-
-// Serve React app for all other routes
+// Catch-all route to serve React app for all other routes
 app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
