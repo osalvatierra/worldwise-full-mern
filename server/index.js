@@ -478,11 +478,14 @@ app.get("/app/cities/:id", async (req, res) => {
 
 // Catch-all route to serve React app for all other routes
 app.get("*", (req, res) => {
-  console.log("Catch-all route triggered for:", req.url);
-  res.sendFile(path.join(distPath, "index.html"), (err) => {
+  const indexPath = path.join(distPath, "index.html");
+  console.log("Serving index.html from:", indexPath);
+  res.sendFile(indexPath, (err) => {
     if (err) {
       console.error("Error sending index.html:", err);
       res.status(500).send(err);
+    } else {
+      console.log("index.html served successfully");
     }
   });
 });
