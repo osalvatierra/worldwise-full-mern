@@ -12,7 +12,7 @@ function AppLayout() {
   const queryParams = new URLSearchParams(location.search);
   const lat = queryParams.get("lat");
   const lng = queryParams.get("lng");
-
+  //
   console.log("Testing presence of lat: " + lat);
 
   const validLat = lat !== null ? parseFloat(lat) : null;
