@@ -73,6 +73,37 @@ fs.access(distPath, fs.constants.F_OK, (err) => {
 // Serve static files from the React app's build directory
 app.use(express.static(distPath));
 
+// Check if a request is being handled before it reaches the catch-all route
+app.use((req, res, next) => {
+  console.log(`Request being handled by middleware: ${req.method} ${req.url}`);
+  next();
+});
+
+// Serve React app for all other routes
+app.get("*", (req, res) => {
+  console.log("Catch-all route hit for:", req.url);
+
+  const indexPath = path.join(distPath, "index.html");
+  console.log("Serving index.html from:", indexPath);
+
+  // Check if index.html exists
+  fs.access(indexPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error("index.html does not exist:", indexPath);
+      res.status(404).send("index.html not found");
+    } else {
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error("Error sending index.html:", err);
+          res.status(500).send(err);
+        } else {
+          console.log("index.html served successfully");
+        }
+      });
+    }
+  });
+});
+
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
   console.log("Route /app/cities accessed");
@@ -468,26 +499,6 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
-});
-
-// Check if a request is being handled before it reaches the catch-all route
-app.use((req, res, next) => {
-  console.log(`Request being handled by middleware: ${req.method} ${req.url}`);
-  next();
-});
-
-// Catch-all route to serve React app for all other routes
-app.get("*", (req, res) => {
-  const indexPath = path.join(distPath, "index.html");
-  console.log("Serving index.html from:", indexPath);
-  res.sendFile(indexPath, (err) => {
-    if (err) {
-      console.error("Error sending index.html:", err);
-      res.status(500).send(err);
-    } else {
-      console.log("index.html served successfully");
-    }
-  });
 });
 
 app.listen(1337, () => {
