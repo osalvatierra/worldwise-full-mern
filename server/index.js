@@ -73,6 +73,16 @@ fs.access(distPath, fs.constants.F_OK, (err) => {
 // Serve static files from the React app's build directory
 app.use(express.static(distPath));
 
+// Middleware to log requests for debugging
+app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
+
+app.get("/index.html", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
+
 // Define a route to serve the dynamic JSON file
 app.get("/app/cities", async (req, res) => {
   console.log("Route /app/cities accessed");
@@ -468,40 +478,6 @@ app.get("/app/cities/:id", async (req, res) => {
     console.log(error);
     res.status(401).json({ error: "Invalid token" });
   }
-});
-
-// Check if a request is being handled before it reaches the catch-all route
-app.use((req, res, next) => {
-  console.log(`Request being handled by middleware: ${req.method} ${req.url}`);
-  next();
-});
-
-// Explicit route for index.html
-app.get("/index.html", (req, res) => {
-  const indexPath = path.join(distPath, "index.html");
-  console.log("Attempting to serve index.html from:", indexPath);
-
-  fs.access(indexPath, fs.constants.F_OK, (err) => {
-    if (err) {
-      console.error("index.html does not exist:", indexPath);
-      res.status(404).send("index.html not found");
-    } else {
-      res.sendFile(indexPath, (err) => {
-        if (err) {
-          console.error("Error sending index.html:", err);
-          res.status(500).send(err);
-        } else {
-          console.log("index.html served successfully");
-        }
-      });
-    }
-  });
-});
-
-// Middleware to log requests for debugging
-app.use((req, res, next) => {
-  console.log(`Request received: ${req.method} ${req.url}`);
-  next();
 });
 
 // Catch-all route to serve index.html
