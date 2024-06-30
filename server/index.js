@@ -476,16 +476,54 @@ app.use((req, res, next) => {
   next();
 });
 
-// Catch-all route to serve React app for all other routes
-app.get("*", (req, res) => {
+// Explicit route for index.html
+app.get("/index.html", (req, res) => {
   const indexPath = path.join(distPath, "index.html");
-  console.log("Serving index.html from:", indexPath);
-  res.sendFile(indexPath, (err) => {
+  console.log("Attempting to serve index.html from:", indexPath);
+
+  fs.access(indexPath, fs.constants.F_OK, (err) => {
     if (err) {
-      console.error("Error sending index.html:", err);
-      res.status(500).send(err);
+      console.error("index.html does not exist:", indexPath);
+      res.status(404).send("index.html not found");
     } else {
-      console.log("index.html served successfully");
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error("Error sending index.html:", err);
+          res.status(500).send(err);
+        } else {
+          console.log("index.html served successfully");
+        }
+      });
+    }
+  });
+});
+
+// Middleware to log requests for debugging
+app.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
+
+// Catch-all route to serve index.html
+app.get("*", (req, res) => {
+  console.log("Catch-all route hit for:", req.url);
+
+  const indexPath = path.join(distPath, "index.html");
+  console.log("Attempting to serve index.html from:", indexPath);
+
+  fs.access(indexPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error("index.html does not exist:", indexPath);
+      res.status(404).send("index.html not found");
+    } else {
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error("Error sending index.html:", err);
+          res.status(500).send(err);
+        } else {
+          console.log("index.html served successfully");
+        }
+      });
     }
   });
 });
