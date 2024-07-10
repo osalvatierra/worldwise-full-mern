@@ -9,7 +9,6 @@ export default function PageNotFound() {
 
       <section>
         <h1>Page not found 😢</h1>
-
         <Link to="/login" className="cta">
           Start Tracking Now
         </Link>
